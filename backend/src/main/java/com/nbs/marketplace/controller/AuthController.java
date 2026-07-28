@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nbs.marketplace.dto.LoginRequest;
+import com.nbs.marketplace.dto.LoginResponse;
 import com.nbs.marketplace.dto.RegisterRequest;
 import com.nbs.marketplace.dto.UserResponse;
+import com.nbs.marketplace.service.AuthenticationService;
 import com.nbs.marketplace.service.UserService;
 
 @RestController
@@ -16,9 +19,12 @@ import com.nbs.marketplace.service.UserService;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService,
+                          AuthenticationService authenticationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/register")
@@ -27,5 +33,13 @@ public class AuthController {
         UserResponse response = userService.registerUser(request);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+
+        LoginResponse response = authenticationService.login(request);
+
+        return ResponseEntity.ok(response);
     }
 }
