@@ -3,6 +3,9 @@ package com.nbs.marketplace.security;
 import java.security.Key;
 import java.util.Date;
 
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -13,13 +16,13 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    // Secret key used to sign JWT tokens
-    private static final String SECRET_KEY =
-            "mySuperSecretKeyForJwtAuthentication12345678901234567890";
+    // Secret key loaded from application.properties
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     // Generate signing key
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     // Generate JWT token
@@ -28,8 +31,8 @@ public class JwtService {
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24))
+                .signWith((SecretKey) getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -37,7 +40,7 @@ public class JwtService {
     public Claims extractAllClaims(String token) {
 
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) getSigningKey())
+                .verifyWith((SecretKey) getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
