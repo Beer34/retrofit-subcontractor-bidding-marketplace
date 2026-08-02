@@ -2,9 +2,11 @@ package com.nbs.marketplace.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +47,23 @@ public class JobController {
 
     return ResponseEntity.ok(jobService.getJobById(id));
 
+    }
+    // Update retrofit job
+    @PutMapping("/{id}")
+    public ResponseEntity<JobResponse> updateJob(
+        @PathVariable Long id,
+        @RequestBody JobRequest request) {
+
+    return ResponseEntity.ok(jobService.updateJob(id, request));
+
+    }
+    // Delete retrofit job
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
+
+        jobService.deleteJob(id);
+
+        return ResponseEntity.noContent().build();
     }   
 
 }

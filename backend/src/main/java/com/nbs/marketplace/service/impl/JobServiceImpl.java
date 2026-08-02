@@ -105,12 +105,42 @@ public class JobServiceImpl implements JobService {
     // Update retrofit job
     @Override
     public JobResponse updateJob(Long id, JobRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
+
+    Job job = jobRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Job not found with ID: " + id));
+
+    // Update editable fields
+    job.setTitle(request.getTitle());
+    job.setDescription(request.getDescription());
+    job.setLocation(request.getLocation());
+    job.setBudget(request.getBudget());
+    job.setDeadline(request.getDeadline());
+
+    // Save updated job
+    Job updatedJob = jobRepository.save(job);
+
+    // Prepare response
+    JobResponse response = new JobResponse();
+
+    response.setId(updatedJob.getId());
+    response.setTitle(updatedJob.getTitle());
+    response.setDescription(updatedJob.getDescription());
+    response.setLocation(updatedJob.getLocation());
+    response.setBudget(updatedJob.getBudget());
+    response.setDeadline(updatedJob.getDeadline());
+    response.setStatus(updatedJob.getStatus());
+    response.setCreatedAt(updatedJob.getCreatedAt());
+
+    return response;
+}
 
     // Delete retrofit job
     @Override
     public void deleteJob(Long id) {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found with ID: " + id));
+
+        jobRepository.delete(job);
     }
 }
