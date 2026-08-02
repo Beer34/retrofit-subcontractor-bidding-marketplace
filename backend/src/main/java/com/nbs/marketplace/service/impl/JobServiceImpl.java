@@ -60,14 +60,47 @@ public class JobServiceImpl implements JobService {
     // Get all retrofit jobs
     @Override
     public List<JobResponse> getAllJobs() {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
+
+    List<Job> jobs = jobRepository.findAll();
+
+    return jobs.stream().map(job -> {
+
+        JobResponse response = new JobResponse();
+
+        response.setId(job.getId());
+        response.setTitle(job.getTitle());
+        response.setDescription(job.getDescription());
+        response.setLocation(job.getLocation());
+        response.setBudget(job.getBudget());
+        response.setDeadline(job.getDeadline());
+        response.setStatus(job.getStatus());
+        response.setCreatedAt(job.getCreatedAt());
+
+        return response;
+
+    }).toList();
+}
 
     // Get retrofit job by ID
     @Override
     public JobResponse getJobById(Long id) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
+
+    Job job = jobRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Job not found with ID: " + id));
+
+    JobResponse response = new JobResponse();
+
+    response.setId(job.getId());
+    response.setTitle(job.getTitle());
+    response.setDescription(job.getDescription());
+    response.setLocation(job.getLocation());
+    response.setBudget(job.getBudget());
+    response.setDeadline(job.getDeadline());
+    response.setStatus(job.getStatus());
+    response.setCreatedAt(job.getCreatedAt());
+
+    return response;
+}
 
     // Update retrofit job
     @Override
